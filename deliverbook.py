@@ -3,10 +3,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def sent_eml(txt_name):
-    username = '380600575'
-    password='hfzcgneimdirbifj' 
-    sender='380600575@qq.com'
-    receiver='binyang758@kindle.cn'
+    username = '******' #邮箱有户名
+    password='********' #登录密钥，推荐使用QQ邮箱，网易邮箱的垃圾邮件阻止策略非常麻烦
+    sender='*****@qq.com'
+    receiver='*****@kindle.cn'
     message = MIMEMultipart()
     message['From'] = sender
     message['To'] = receiver
@@ -14,7 +14,7 @@ def sent_eml(txt_name):
     # 用add_header 方法可以避免附件中文编码的问题
     message_docx.add_header('content-disposition', 'attachment', filename=txt_name)
     message.attach(message_docx)
-    message['Subject'] = 'convert'
+    message['Subject'] = 'convert'#确保kindle收到的邮件主题为convert这样才能自动转换
     try:
         smtpObj = smtplib.SMTP() 
     #连接到服务器
