@@ -1,6 +1,9 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context 
 
 def sent_eml(txt_name):
     username = '******' #邮箱有户名
