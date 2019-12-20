@@ -6,6 +6,8 @@ import re
 import os
 import time
 import sys
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context 
 req_header={
 'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
 'Accept-Encoding':'gzip, deflate，br',
@@ -13,13 +15,13 @@ req_header={
 'Cookie':'UM_distinctid=16ec3fa5cea7f-08ddf32fa381a3-2393f61-100200-16ec3fa5ceb22b; CNZZDATA1261736110=288883036-1575245968-%7C1575245968; Hm_lvt_5ee23c2731c7127c7ad800272fdd85ba=1575245996; Hm_lpvt_5ee23c2731c7127c7ad800272fdd85ba=1575245999',
 'Host':'www.jx.la',
 'Proxy-Connection':'keep-alive',
-'Referer':'http://www.jx.la/book/',
+'Referer':'https://www.jx.la/book/',
 'Upgrade-Insecure-Requests':'1',
 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
 }
 
 
-req_url_base='http://www.jx.la/book/'           #小说主地址
+req_url_base='https://www.jx.la/book/'           #小说主地址
 
 #小说下载函数
 #txt_id：小说编号
@@ -72,8 +74,8 @@ def get_txt(txt_id):
         #获取每一章节信息
         for one_page_info in all_page_address:
             try:
-                #请求当前章节页面
-                r=requests.get(req_url+str(one_page_info['href']),params=req_header)
+                #请求当前章节页面 增加超时5秒的
+                r=requests.get(req_url+str(one_page_info['href']),params=req_header,timeout=5)
                 #soup转换
                 soup=BeautifulSoup(r.text,"html.parser")
                 #获取章节名称
@@ -89,8 +91,10 @@ def get_txt(txt_id):
                 fo.write((section_text).encode('UTF-8'))
                 print(txt['title']+' 章节：'+section_name.text+'     已下载')
                 #print(section_text.text.encode('UTF-8'))
-            except:
-                print("编号："+'{0:0>8}   '.format(txt['id'])+  "小说名：《"+txt['title']+"》 章节下载失败，正在重新下载。")
+              #跳过超时章节，继续下载
+            except requests.exceptions.RequestException as wrong :
+                
+                print("编号："+'{0:0>8}   '.format(txt['id'])+  "小说名：《"+txt['title']+"》 章节下载失败，跳过并继续下载。")
         fo.close()
         os.rename('{0:0>8}-{1}.txt.download'.format(txt['id'],txt['title']), '{0:0>8}-{1}.txt'.format(txt['id'],txt['title']))
     except:     #出现错误会将错误信息写入dowload.log文件，同时答应出来
