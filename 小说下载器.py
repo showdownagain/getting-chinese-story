@@ -1,4 +1,5 @@
 #coding:utf-8
+#!/usr/bin/env python
 from urllib.request import urlopen#用于获取网页
 from bs4 import BeautifulSoup#用于解析网页
 import re
@@ -25,16 +26,24 @@ while 1>0:
     bsObj = BeautifulSoup(html, 'html.parser')
     t1 = bsObj.find_all('a')
     links=[]
+    dic_1={}
     for t2 in t1:
-        t3 = t2.get('href')
-        links.append(t3)
-    axe = links[0]
-    bookid = re.findall(r'\d+\.?\d*',axe)
-    temp_id = ''.join(bookid)
-    final_id = int(temp_id)
-    get_txt(final_id)
-    temp_name = selectfile(bookname)
-    sent_eml(temp_name)
-
+        t3 = t2.string
+        check_name1 = re.findall("[\u4e00-\u9fa5]+",t3)
+        check_name = ''.join(check_name1)
+        dic_1[check_name] = t2.get('href')
+    if bookname in dic_1.keys():
+        axe = dic_1[bookname]
+        bookid = re.findall(r'\d+\.?\d*',axe)
+        temp_id = ''.join(bookid)
+        final_id = int(temp_id)
+        get_txt(final_id)
+        temp_name = selectfile(bookname)
+        sent_eml(temp_name)
+    else:
+        print('搜不到这本书')
+        continue
+    
+    
 
 
