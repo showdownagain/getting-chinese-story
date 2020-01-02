@@ -69,8 +69,9 @@ def get_txt(txt_id):
     print("编号："+'{0:0>8}   '.format(txt['id'])+  "小说名：《"+txt['title']+"》  开始下载。")
     print("正在获取所有章节地址。。。")
     #获取小说所有章节信息
-    all_page_address=soups.select('#wrapper .box_con #list dl dd a')
+    all_page_address1=soups.select('#wrapper .box_con #list dl dd a')
     #获取小说总章页面数
+    all_page_address = all_page_address1[12::]
     section_ct=len(all_page_address)
     print("小说章节页数："+str(section_ct))
     #打开小说文件写入小说相关信息
